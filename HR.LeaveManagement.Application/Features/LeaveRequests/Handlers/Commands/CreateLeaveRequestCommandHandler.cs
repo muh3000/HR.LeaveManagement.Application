@@ -2,7 +2,7 @@
 using FluentValidation;
 using HR.LeaveManagement.Application.DTOs.LeaveRequest.Validators;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
-using HR.LeaveManagement.Application.Persistace.Contracts;
+using HR.LeaveManagement.Application.Contracts.Persistace;
 using HR.LeaveManagement.Application.Responses;
 using HR.LeaveManagement.Domain;
 using MediatR;
@@ -12,7 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using HR.LeaveManagement.Application.Contracts.Infrastructure;
+using HR.LeaveManagement.Application.Model;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
@@ -21,12 +22,14 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         private readonly ILeaveRequestRepository _leaveRequestRepository;
         private readonly ILeaveTypeRepository _leaveTypeRepository;
         private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
 
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository, IMapper mapper,IEmailSender emailSender)
         {
             _leaveRequestRepository = leaveRequestRepository;
             _leaveTypeRepository = leaveTypeRepository;
             _mapper = mapper;
+            _emailSender = emailSender;
         }
 
        
@@ -54,6 +57,25 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             reponse.Success = true;
             reponse.Message = "Creation Successful";
             reponse.Id = leaveRequest.Id;
+
+            var email = new Email()
+            {
+                To = "mysystem@com.com",
+                Body = "Some text for the body",
+                Subject = "some subject"
+            };
+
+            try
+            {
+                await _emailSender.SendEmail(email);
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+
+
 
             return reponse;
 

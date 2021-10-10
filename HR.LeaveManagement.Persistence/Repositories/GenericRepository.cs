@@ -1,4 +1,5 @@
-﻿using HR.LeaveManagement.Application.Persistace.Contracts;
+﻿using HR.LeaveManagement.Application.Contracts.Persistace;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,24 +28,27 @@ namespace HR.LeaveManagement.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<bool> Exists(int Id)
+        public async Task<bool> Exists(int Id)
         {
-            throw new NotImplementedException();
+            var entity = await Get(Id);
+            return entity != null;
         }
 
-        public Task<T> Get(int id)
+        public async Task<T> Get(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _dbContext.Set<T>().FindAsync(id);
+            return entity;
         }
 
-        public Task<IReadOnlyList<T>> GetAll()
+        public async Task<IReadOnlyList<T>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public Task Update(T entity)
+        public async Task Update(T entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

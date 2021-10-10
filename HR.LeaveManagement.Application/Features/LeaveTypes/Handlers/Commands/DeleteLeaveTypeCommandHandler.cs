@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
-using HR.LeaveManagement.Application.Persistace.Contracts;
+using HR.LeaveManagement.Application.Contracts.Persistace;
 using MediatR;
 using System;
 using System.Collections.Generic;
